@@ -74,19 +74,19 @@ Setiap kelas sampel didefinisikan sebagai **FeatureCollection** dengan **Propert
 
 | Kelas           | FeatureCollection | Value (`classification`) |
 |-----------------|-------------------|--------------------------|
-| Lahan Terbangun | `Lahan_Terbangun` | 1                        |
-| Lahan Terbuka   | `Lahan_Terbuka`   | 2                        |
-| Vegetasi        | `Vegetasi`        | 3                        |
-| Badan Air       | `Badan_Air`       | 4                        |
+| Vegetasi        | `Vegetasi`        | 0                        |
+| Badan Air       | `Badan_Air`       | 1                        |
+| Lahan Terbangun | `Lahan_Terbangun` | 2                        |
+| Lahan Terbuka   | `Lahan_Terbuka`   | 3                        |
 
 **Kode GEE:**
 
 ```js
 var classListTanahDatar = [
-  {fc: Lahan_Terbangun, val: 1},
-  {fc: Lahan_Terbuka, val: 2},
-  {fc: Vegetasi, val: 3},
-  {fc: Badan_Air, val: 4}
+  {fc: Lahan_Terbangun, val: 2},
+  {fc: Lahan_Terbuka, val: 3},
+  {fc: Vegetasi, val: 0},
+  {fc: Badan_Air, val: 1}
 ];
 
 var createSamples = function(classList) {
@@ -101,7 +101,7 @@ var createSamples = function(classList) {
 var allSamples = createSamples(classListTanahDatar);
 ```
 
-Standarisasi ini memastikan seluruh geometri sampel memiliki **skema atribut yang seragam** (`classification` dengan nilai integer 1-4) sehingga kompatibel dengan proses training dan validasi.
+Standarisasi ini memastikan seluruh geometri sampel memiliki **skema atribut yang seragam** (`classification` dengan nilai integer 0-3) sehingga kompatibel dengan proses training dan validasi.
 
 ---
 
@@ -141,7 +141,7 @@ Export.image.toDrive({
 | Format          | GeoTIFF                            |
 | Resolusi (scale)| 10 m                               |
 | CRS             | EPSG:32747 (UTM 47S)               |
-| Nilai kelas     | 1 – 4 (integer), `noData` = 0      |
+| Nilai kelas     | 0 – 3 (integer), `noData` = 0      |
 
 ---
 
@@ -166,10 +166,10 @@ Raster hasil klasifikasi dikonversi menjadi vektor (poligon) menggunakan **Polyg
 
 **Langkah di QGIS:**
 
-1. Muat raster hasil clip (nilai integer 1-4).
+1. Muat raster hasil clip (nilai integer 0-3).
 2. Menu **Raster → Conversion → Polygonize (Raster to Vector)**.
 3. Kolom field nama = `DN` (nilai kelas).
-4. Hasilnya berupa poligon `MultiPolygon` dengan atribut `DN` (1-4).
+4. Hasilnya berupa poligon `MultiPolygon` dengan atribut `DN` (0-3).
 5. Simplifikasi geometri (jika diperlukan) untuk memperkecil ukuran file: **Vector → Geometry Tools → Simplify**.
 
 > **Catatan:** Raster yang telah di-*sieve* sebelum polygonize akan menghasilkan poligon yang lebih bersih.
@@ -185,7 +185,7 @@ Setelah vectorize, tabel atribut masih berisi kolom `DN`. Lakukan penyesuaian ag
 | Field        | Tipe     | Deskripsi                                  | Contoh          |
 |--------------|----------|--------------------------------------------|-----------------|
 | `fid`        | Integer  | ID unik fitur                              | 1, 2, 3 ...     |
-| `landcover`  | Integer  | Kode kelas (1-4)                           | 1               |
+| `landcover`  | Integer  | Kode kelas (0-3)                           | 0               |
 | `kelas`      | Text     | Nama kelas penutup lahan                   | Lahan Terbangun |
 | `luas_ha`    | Double   | Luas (hektar)                              | 125.36          |
 | `luas_km2`   | Double   | Luas (kilometer persegi)                   | 1.2536          |
